@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui.ui'
+# Form implementation generated from reading ui file 'ui1.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -125,6 +125,8 @@ class Ui_MainWindow(object):
         self.diagram_.setStyleSheet("border: 4px solid #8600ad;\n"
 "")
         self.diagram_.setText("")
+        self.diagram_.setScaledContents(True)
+        self.diagram_.setAlignment(QtCore.Qt.AlignCenter)
         self.diagram_.setObjectName("diagram_")
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -139,3 +141,13 @@ class Ui_MainWindow(object):
         self.viewFile.setText(_translate("MainWindow", "View JSON"))
         self.downloadFile.setText(_translate("MainWindow", "download"))
         self.text_json.setText(_translate("MainWindow", "J S O N"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
