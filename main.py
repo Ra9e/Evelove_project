@@ -5,6 +5,14 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QDir
 from ui import Ui_MainWindow                 # Импорт основного UI
 
+from pyvis.network import Network
+import networkx as nx
+
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtWebEngineWidgets import *
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 
 class JsonV(QtWidgets.QMainWindow):
     def __init__(self):
@@ -14,7 +22,7 @@ class JsonV(QtWidgets.QMainWindow):
         self.init_UI()
 
     def init_UI(self):                       # Функция для доработки графического интерфейса
-        self.setWindowTitle('JSON visualazion')
+        self.setWindowTitle('JSON visualization')
         self.setWindowIcon(QIcon('C:\\Users\\1\\PycharmProjects\\pythonProject\\1.png'))
         self.ui.openFile.clicked.connect(self.open_json)
         self.ui.openDiagram.clicked.connect(self.open_diagram)
@@ -29,7 +37,26 @@ class JsonV(QtWidgets.QMainWindow):
         self.ui.diagram_.setPixmap(QPixmap(file_pic[0]))
 
     def view_json(self):
-        pass
+        web = QWebEngineView()
+        html_name = 'nx.html'
+
+        nx_graph = nx.cycle_graph(10)
+        nx_graph.nodes[1]['title'] = 'Number 1'
+        nx_graph.nodes[1]['group'] = 1
+        nx_graph.nodes[3]['title'] = 'I belong to a different group!'
+        nx_graph.nodes[3]['group'] = 10
+        nx_graph.add_node(20, size=20, title='couple', group=2)
+        nx_graph.add_node(21, size=15, title='couple', group=2)
+        nx_graph.add_edge(20, 21, weight=5)
+        nx_graph.add_node(25, size=25, label='lonely', title='lonely node', group=3)
+        nt = Network('500px', '500px')
+
+        # populates the nodes and edges data structures
+        nt.from_nx(nx_graph)
+        nt.show(html_name)
+        nt.save_graph(html_name)
+        #web.load(QUrl("https://pythonspot.com"))
+        #web.show()
 
 
 app = QtWidgets.QApplication([])
