@@ -8,11 +8,11 @@ from ui import Ui_MainWindow                 # Импорт основного U
 from pyvis.network import Network
 import networkx as nx
 
-from PyQt5.QtCore import *
+"""from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow"""
 
 class JsonV(QtWidgets.QMainWindow):
     def __init__(self):
@@ -37,7 +37,7 @@ class JsonV(QtWidgets.QMainWindow):
         self.ui.diagram_.setPixmap(QPixmap(file_pic[0]))
 
     def view_json(self):
-        web = QWebEngineView()
+        """web = QWebEngineView()
         html_name = 'nx.html'
 
         nx_graph = nx.cycle_graph(10)
@@ -55,8 +55,9 @@ class JsonV(QtWidgets.QMainWindow):
         nt.from_nx(nx_graph)
         nt.show(html_name)
         nt.save_graph(html_name)
-        #web.load(QUrl("https://pythonspot.com"))
-        #web.show()
+
+        web.load(QUrl("https://pythonspot.com"))
+        web.show()"""
 
 
 app = QtWidgets.QApplication([])
