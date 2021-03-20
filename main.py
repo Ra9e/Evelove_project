@@ -4,15 +4,14 @@ from PyQt5.QtWidgets import QFileDialog      # Для работы с загру
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QDir
 from ui import Ui_MainWindow                 # Импорт основного UI
+from json_visual import prt_data
 
 from pyvis.network import Network
-import networkx as nx
+import json
 
-"""from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow"""
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
 
 class JsonV(QtWidgets.QMainWindow):
     def __init__(self):
@@ -30,35 +29,59 @@ class JsonV(QtWidgets.QMainWindow):
         self.setFixedSize(471, 431)
 
     def open_json(self):                     # Функция для загрузки json файла, обработка 1 кнопки
+        global file_name
         file_name = QFileDialog.getOpenFileName(self, 'Open JSON file', filter="JSON files (*.json)")
 
     def open_diagram(self):                  # Функция для загрузки json файла, обработка 2 кнопки
-        file_pic = QFileDialog.getOpenFileName(self, 'Open JSON file', filter="JSON files (*.jpeg, *.jpg)")
-        self.ui.diagram_.setPixmap(QPixmap(file_pic[0]))
+        #file_pic = QFileDialog.getOpenFileName(self, 'Open JSON file', filter="JSON files (*.jpeg, *.jpg)")
+        #text = (prt_data())
+        text = "1 H 2 H 3 A1 A1 H"
+
+        wordCLD = WordCloud(width=900, height=750, margin=0).generate(text)
+        plt.imshow(wordCLD, interpolation='bilinear')
+        plt.axis("off")
+        plt.margins(x=0, y=0)
+        plt.savefig('saved_figure.png')
+        self.ui.diagram_.setPixmap(QPixmap("C:\\Users\\1\\PycharmProjects\\pythonProject\\saved_figure.png"))
 
     def view_json(self):
-        """web = QWebEngineView()
-        html_name = 'nx.html'
+        try:
+            def get_data():
+                with open(file_name[0], "r") as json_file:
+                    data = json.load(json_file)
+                    return (data["alcuin_letters"])
 
-        nx_graph = nx.cycle_graph(10)
-        nx_graph.nodes[1]['title'] = 'Number 1'
-        nx_graph.nodes[1]['group'] = 1
-        nx_graph.nodes[3]['title'] = 'I belong to a different group!'
-        nx_graph.nodes[3]['group'] = 10
-        nx_graph.add_node(20, size=20, title='couple', group=2)
-        nx_graph.add_node(21, size=15, title='couple', group=2)
-        nx_graph.add_edge(20, 21, weight=5)
-        nx_graph.add_node(25, size=25, label='lonely', title='lonely node', group=3)
-        nt = Network('500px', '500px')
+            def map_algs(graph, alg="barnes"):  # Алгоритмы графиков
+                if alg == "barnes":
+                    graph.barnes_hut()  # Для работы с большими данными
+                if alg == "forced":
+                    graph.force_atlas_2based()
+                if alg == "hr":
+                    graph.hrepulsion()
 
-        # populates the nodes and edges data structures
-        nt.from_nx(nx_graph)
-        nt.show(html_name)
-        nt.save_graph(html_name)
+            def map_data(letter_data, ep_color="#03DAC6", ms_color="#da03b3", edge_color="#018786",
+                         ep_shape="ellipse", ms_shape="box", alg="barnes", buttons=False):
+                graph = Network(height="1000px", width="100%", bgcolor="#222222", font_color="white", directed=True)
+                if buttons == True:
+                    graph.width = "62%"
+                    graph.show_buttons(filter_=["edges"])  # Кнопки для работы с графиков в реальном времени
 
-        web.load(QUrl("https://pythonspot.com"))
-        web.show()"""
+                for letter in letter_data:
+                    ep = (letter["ep_num"])[0]
+                    graph.add_node(ep, color=ep_color, shape=ep_shape)  # Добавляем узел и наносим его на график
 
+                    mss = (letter["mss"])
+                    for ms in mss:
+                        graph.add_node(ms, color=ms_color, shape=ms_shape)  # Добавляем узел и наносим его на график
+                        graph.add_edge(ep, ms, color=edge_color)
+
+                map_algs(graph, alg=alg)
+                graph.show("letters.html")
+
+            epp_data = get_data()
+            map_data(letter_data=epp_data, alg="forced", buttons=True)
+        except:
+            pass
 
 app = QtWidgets.QApplication([])
 application = JsonV()
