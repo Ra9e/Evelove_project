@@ -49,7 +49,7 @@ class JsonV(QtWidgets.QMainWindow):
             def get_data():
                 with open(file_name[0], "r") as json_file:
                     data = json.load(json_file)
-                    return (data["alcuin_letters"])
+                    return (data)               # data["alcuin_letters"]
 
             def map_algs(graph, alg="barnes"):  # Алгоритмы графиков
                 if alg == "barnes":
@@ -60,28 +60,47 @@ class JsonV(QtWidgets.QMainWindow):
                     graph.hrepulsion()
 
             def map_data(letter_data, ep_color="#03DAC6", ms_color="#da03b3", edge_color="#018786",
-                         ep_shape="ellipse", ms_shape="box", alg="barnes", buttons=False):
+                         ep_shape="triangle", ms_shape="box", alg="barnes", buttons=False,
+                         recipient_color="#FFA300", recipient_shape="ellipse",
+                         cited_color="#DFEE9A", cited_shape="square"):
                 graph = Network(height="1000px", width="100%", bgcolor="#222222", font_color="white", directed=True)
+                graph.add_node("Alcuin 1", color="#EB9090")
+
                 if buttons == True:
                     graph.width = "62%"
                     graph.show_buttons(filter_=["edges"])  # Кнопки для работы с графиков в реальном времени
 
-                for letter in letter_data:
+                for letter in letter_data[0:10]:
+
                     ep = (letter["ep_num"])[0]
                     graph.add_node(ep, color=ep_color, shape=ep_shape)  # Добавляем узел и наносим его на график
+                    graph.add_edge("Alcuin 1", ep, color=edge_color)
 
                     mss = (letter["mss"])
                     for ms in mss:
                         graph.add_node(ms, color=ms_color, shape=ms_shape)  # Добавляем узел и наносим его на график
                         graph.add_edge(ep, ms, color=edge_color)
 
+                    recipients = (letter["recipients"])
+                    for recipient in recipients:
+                        graph.add_node(recipient, color=recipient_color, shape=recipient_shape)
+                        graph.add_edge(ep, recipient, color=recipient_color)
+                        graph.add_edge("Alcuin 1", recipient, color="#EB9090")
+
+                    people_cited = (letter["people_cited"])
+                    for cited in people_cited:
+                        if "Alcuin 1" not in cited:
+                            graph.add_node(cited, color=cited_color, shape=cited_shape)
+                            graph.add_edge(ep, cited, color=cited_color)
+
                 map_algs(graph, alg=alg)
                 graph.show("letters.html")
 
             epp_data = get_data()
-            map_data(letter_data=epp_data, alg="forced", buttons=True)
+            map_data(letter_data=epp_data, alg="force", buttons=True)
         except:
             pass
+
 
 app = QtWidgets.QApplication([])
 application = JsonV()
